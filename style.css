@@ -1,0 +1,31 @@
+#game_area {
+    display: flex;
+    flex-direction: column;
+    border: 5px solid black;
+    width: 480px;
+    height: 600px;
+    padding: 2%;
+    align-items: center;
+    justify-content: center;
+    margin-left: 30%;
+    margin-top: 5%;
+}
+
+.rowDiv {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid black;
+    width: 510px;
+    height: 30px;
+}
+
+.colDiv {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid black;
+    width: 30px;
+    height: 30px;
+    font-weight: bold;
+    text-align: center;
+    justify-content: center;
+}
