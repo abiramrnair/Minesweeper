@@ -7,8 +7,9 @@
     padding: 2%;
     align-items: center;
     justify-content: center;
-    margin-left: 30%;
-    margin-top: 5%;
+    margin-left: 35%;
+    margin-top: 3%;
+    background:#E6E6FA;
 }
 
 .rowDiv {
@@ -17,15 +18,22 @@
     border: 1px solid black;
     width: 510px;
     height: 30px;
+    background: white;
 }
 
-.colDiv {
-    display: flex;
-    flex-direction: row;
+.colDiv {     
     border: 1px solid black;
     width: 30px;
     height: 30px;
     font-weight: bold;
     text-align: center;
     justify-content: center;
+    cursor: crosshair;  
+    background: white;  
 }
+
+h3 {
+    text-align: center;
+    color: red;
+}
+

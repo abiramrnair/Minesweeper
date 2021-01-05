@@ -1,10 +1,13 @@
-// Make a function to create a grid within game area
+// Declare global variables
 let game_area = document.getElementById("game_area");
 let box_number = -1;
 var mine_array = [];
+var linear_array = [];
 var visited_array = [];
+var game_done = false;
+var flag_mode = false;
 
-function generateMines() { // Random function that populates grid with random mines
+function generateMines() { // function that randomly populates grid with mines
 
     let result = Math.floor((Math.random() * 100) + 1);
 
@@ -33,9 +36,8 @@ function outofBounds(x, y) { // Checks to see if the square being accessed will 
 }
 
 function isSquareSafe(x, y) { // Looks at coordinate and sees if mine or no
-    let result = coordinateConverter(x, y)
-
-    if (result == "mine") {
+    
+    if (mine_array[y][x] == "mine") {
         return false;
     }
 
@@ -177,7 +179,34 @@ function labelMines(x, y) { // If mines are found around a square, then highligh
     }   
 }
 
-function revealSafeSquares(x, y) {
+function revealAllMines() {
+    for (i = 0; i < linear_array.length; i++) {
+        let box = document.getElementById(`${linear_array[i]}`);
+        box.style.background = "#F08080"; 
+        let textnode = document.createTextNode("⚫");
+        box.append(textnode);
+    }
+}
+
+function userClick(element_number) {
+    let y = Math.floor(element_number / 16);
+    let x = element_number - (16 * (Math.floor(element_number / 16)));
+    
+    if (isSquareSafe(x, y) == true) {
+        revealSafeSquares(x, y);               
+    }
+    else if (game_done == false) {
+        revealAllMines();
+        document.getElementById("game_indicator").textContent = "Game Status: Lost";
+        game_done = true;
+    }  
+}
+
+function revealSafeSquares(x, y) { // Recursive function that can reveal squares, surrounding mines and flood fill empty squares
+
+    if (game_done == true) { // game toggle 
+        return false;
+    }
 
     if (outofBounds(x, y) == true) { // if square is not on grid
         return false;
@@ -231,9 +260,7 @@ function make2DArray(rows,cols) { // Make 2D array that is a copy of the actual 
     }    
 }
 
-make2DArray(20,16);
-
-function makeGameArea(rows,cols) {
+function makeGameArea(rows,cols) { // Make user interface
 
     for (i = 0; i < rows; i++) {
         let new_div = document.createElement("div");
@@ -245,16 +272,20 @@ function makeGameArea(rows,cols) {
             col_div.className = "colDiv";
             new_div.appendChild(col_div);
             box_number += 1;
-            col_div.id = box_number;
-
+            col_div.id = box_number;            
+            col_div.setAttribute("onclick", `userClick(${box_number})`);           
             let result = generateMines();
 
-            if (result == true) {
-                col_div.style.background = "#b5651d"; // remove at the end, just for testing
+            if (result == true) {                
+                linear_array.push(box_number);
                 mine_array[i][j] = "mine";
             }
         }
     }
+
+    document.getElementById("mine_indicator").textContent = "Total Mines: " + linear_array.length;
+    document.getElementById("game_indicator").textContent = "Game Status: Ongoing";
 }
 
+make2DArray(20,16);
 makeGameArea(20,16);

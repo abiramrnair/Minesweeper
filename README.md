@@ -1,3 +1,3 @@
 # Minesweeper
-# Coded in JS
-# Author: Abiram Nair
+### Coded in JS
+### Author: Abiram Nair
