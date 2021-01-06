@@ -3,6 +3,7 @@ let game_area = document.getElementById("game_area");
 let box_number = -1;
 var mine_array = [];
 var linear_array = [];
+var compare_array = [];
 var visited_array = [];
 var game_done = false;
 var flag_mode = false;
@@ -179,27 +180,67 @@ function labelMines(x, y) { // If mines are found around a square, then highligh
     }   
 }
 
-function revealAllMines() {
+function revealAllMines() { // shows all mines on map
     for (i = 0; i < linear_array.length; i++) {
         let box = document.getElementById(`${linear_array[i]}`);
+        box.textContent = "";
+        
         box.style.background = "#F08080"; 
         let textnode = document.createTextNode("⚫");
         box.append(textnode);
     }
 }
 
-function userClick(element_number) {
+function flagSquare(x, y) { // function to allow user to flag potential mines
+
+    let box_number = coordinateConverter(x, y);
+    var box = document.getElementById(`${box_number}`);
+
+    if (box.textContent == "🚩" && game_done == false) {
+        box.textContent = "";
+        box.style.background = "";
+    }
+
+    else {
+        if (game_done == false) {
+            let flag = document.createTextNode("🚩");
+            box.style.background = "#E0FFFF";
+            box.appendChild(flag);
+        }
+    }
+}
+
+function gameWon() { // checks to see if all safe squares have been discovered
+    if ((linear_array.length + compare_array.length) == 320) {
+        return true;        
+    }
+}
+
+function userClick(element_number) {    
     let y = Math.floor(element_number / 16);
     let x = element_number - (16 * (Math.floor(element_number / 16)));
-    
-    if (isSquareSafe(x, y) == true) {
-        revealSafeSquares(x, y);               
+    let status = document.getElementById("flag_mode").checked;
+
+    if (status == true) {
+        flagSquare(x, y);
     }
-    else if (game_done == false) {
-        revealAllMines();
-        document.getElementById("game_indicator").textContent = "Game Status: Lost";
-        game_done = true;
-    }  
+
+    else if (status == false) {
+
+        if (isSquareSafe(x, y) == true) {
+            revealSafeSquares(x, y);
+            if (gameWon() == true) {
+                document.getElementById("game_indicator").textContent = "Game Status: Won";
+                game_done = true;
+            }                  
+        }
+
+        else if (game_done == false) {
+            revealAllMines();
+            document.getElementById("game_indicator").textContent = "Game Status: Lost";
+            game_done = true;
+        }    
+    }
 }
 
 function revealSafeSquares(x, y) { // Recursive function that can reveal squares, surrounding mines and flood fill empty squares
@@ -228,10 +269,12 @@ function revealSafeSquares(x, y) { // Recursive function that can reveal squares
     if (num_mines > 0) { // if there are mines surrounding, then stop
         labelMines(x, y);
         visited_array[x][y] = "visited";
+        compare_array.push("safe");        
         return false;
     }
 
     box.style.background = "#D3D3D3"; // all checks pass, label square as visited
+    compare_array.push("safe");    
     visited_array[x][y] = "visited";   
     
     revealSafeSquares(x, y + 1);
